@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Data access uses the browser backend client with RLS (public booking insert, admin-only reads via has_role); the first signed-up account becomes admin via a DB trigger — keeps admin setup zero-config.
