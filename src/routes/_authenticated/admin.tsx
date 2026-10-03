@@ -105,13 +105,13 @@ function Appointments() {
 
   async function setStatus(id: string, status: string) {
     const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["appointments"] });
   }
   async function remove(id: string) {
     if (!confirm("Delete this appointment?")) return;
     const { error } = await supabase.from("appointments").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["appointments"] });
   }
 
@@ -192,7 +192,7 @@ function Posts() {
 
   async function save() {
     if (!draft) return;
-    if (!draft.title.trim()) return toast.error("Title is required");
+    if (!draft.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const payload = {
       title: draft.title.trim().slice(0, 200),
@@ -208,7 +208,7 @@ function Posts() {
       ? await supabase.from("posts").update(payload).eq("id", draft.id)
       : await supabase.from("posts").insert(payload);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(draft.id ? "Post updated" : "Post published");
     setDraft(null);
     qc.invalidateQueries({ queryKey: ["admin-posts"] });
@@ -218,7 +218,7 @@ function Posts() {
   async function remove(id: string) {
     if (!confirm("Delete this post?")) return;
     const { error } = await supabase.from("posts").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setDraft(null);
     qc.invalidateQueries({ queryKey: ["admin-posts"] });
   }

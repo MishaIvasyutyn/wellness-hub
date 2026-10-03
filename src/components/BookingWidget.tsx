@@ -20,7 +20,7 @@ export function BookingWidget() {
     return Array.from({ length: 14 }, (_, i) => addDays(today, i + 1)).filter((d) => d.getDay() !== 0);
   }, []);
   const [serviceId, setServiceId] = useState<string>(SERVICES[0].id);
-  const [day, setDay] = useState<Date>(days[0]);
+  const [day, setDay] = useState<Date>(days[0]!);
   const [time, setTime] = useState<string | null>(null);
   const [booked, setBooked] = useState<string[]>([]);
   const [form, setForm] = useState({ full_name: "", email: "", phone: "", notes: "" });
@@ -40,9 +40,9 @@ export function BookingWidget() {
   const open = TIME_SLOTS.filter((t) => !booked.includes(t)).length;
 
   async function submit() {
-    if (!time) return toast.error("Choose a time first");
+    if (!time) { toast.error("Choose a time first"); return; }
     const parsed = schema.safeParse(form);
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Invalid details"); return; }
     setSubmitting(true);
     const { error } = await supabase.from("appointments").insert({
       full_name: parsed.data.full_name,
@@ -54,7 +54,7 @@ export function BookingWidget() {
       appointment_time: time,
     });
     setSubmitting(false);
-    if (error) return toast.error("Could not book. Please try again.");
+    if (error) { toast.error("Could not book. Please try again."); return; }
     setDone(true);
   }
 
